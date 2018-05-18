@@ -70,7 +70,7 @@ public class Main {
                 "https://www.aitaotu.com/tag/tukmo.html"};
 
         // 标签
-        for (int i = 0; i < urlU.length; i++) {
+        for (int j = 0; j < urlU.length; j++) {
             String dom = UrlReqUtil.get("https://www.aitaotu.com/tag/tuinvlang.html");
             String[] split = dom.split("<a class=\"Pli-litpic\"");
 
