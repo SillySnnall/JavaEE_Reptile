@@ -1,90 +1,148 @@
 import com.sun.xml.internal.bind.v2.TODO;
+import org.junit.Test;
+
+import java.io.File;
+import java.util.List;
 
 public class Main {
 
     public static void main(String[] args) {
+        // ---------------------通过标签url获取封面-------------------
+        for (int i = 40; i < Url.urlU.length; i++) {
+            int num = getCover(Url.urlU[i], true);
+            System.out.println(Url.urlU[i] + "  完成度:1/" + num);
+            for (int j = 2; j <= num; j++) {
+                String url = Url.urlU[i].replace(".html", "/" + j + ".html");
+                getCover(url, false);
+                System.out.println(Url.urlU[i] + "  完成度:" + j + "/" + num);
+            }
+            System.out.println(Url.urlU[i] + "  总进度:" + i + "/" + Url.urlU.length);
+        }
+    }
 
-        String[] urlU = {"https://www.aitaotu.com/tag/xixiwang.html",
-                "https://www.aitaotu.com/tag/youguowang.html",
-                "https://www.aitaotu.com/tag/aiss.html",
-                "https://www.aitaotu.com/tag/tuinvlang.html",
-                "https://www.aitaotu.com/tag/rosi.html",
-                "https://www.aitaotu.com/tag/ttns.html",
-                "https://www.aitaotu.com/tag/tuinvshen.html",
-                "https://www.aitaotu.com/tag/pansidong.html",
-                "https://www.aitaotu.com/tag/xiurenwang.html",
-                "https://www.aitaotu.com/tag/ddy.html",
-                "https://www.aitaotu.com/tag/ligui.html",
-                "https://www.aitaotu.com/tag/meituibaobei.html",
-                "https://www.aitaotu.com/tag/meiyuanguan.html",
-                "https://www.aitaotu.com/tag/meiyanshe.html",
-                "https://www.aitaotu.com/tag/aimishe.html",
-                "https://www.aitaotu.com/tag/beautyleg.html",
-                "https://www.aitaotu.com/tag/vnvlang.html",
-                "https://www.aitaotu.com/tag/jiamiannvhuang.html",
-                "https://www.aitaotu.com/tag/mitaoshe.html",
-                "https://www.aitaotu.com/tag/ruyixiezhen.html",
-                "https://www.aitaotu.com/tag/3agirl.html",
-                "https://www.aitaotu.com/tag/sibao.html",
-                "https://www.aitaotu.com/tag/boluoshe.html",
-                "https://www.aitaotu.com/tag/disi.html",
-                "https://www.aitaotu.com/tag/sijianwu.html",
-                "https://www.aitaotu.com/tag/aixiu.html",
-                "https://www.aitaotu.com/tag/HeiSiAi.html",
-                "https://www.aitaotu.com/tag/Leghacker.html",
-                "https://www.aitaotu.com/tag/dongganzhixing.html",
-                "https://www.aitaotu.com/tag/kelanvshen.html",
-                "https://www.aitaotu.com/tag/MFStar.html",
-                "https://www.aitaotu.com/tag/chizuzhe.html",
-                "https://www.aitaotu.com/tag/qingdouke.html",
-                "https://www.aitaotu.com/tag/youwuguan.html",
-                "https://www.aitaotu.com/tag/simeivip.html",
-                "https://www.aitaotu.com/tag/feilin.html",
-                "https://www.aitaotu.com/tag/paimei.html",
-                "https://www.aitaotu.com/tag/youmihui.html",
-                "https://www.aitaotu.com/tag/tangyun.html",
-                "https://www.aitaotu.com/tag/youxingguan.html",
-                "https://www.aitaotu.com/tag/niceleg.html",
-                "https://www.aitaotu.com/tag/shanghaixuancai.html",
-                "https://www.aitaotu.com/tag/yannvshen.html",
-                "https://www.aitaotu.com/tag/meixiu.html",
-                "https://www.aitaotu.com/tag/girlt.html",
-                "https://www.aitaotu.com/tag/xingleyuan.html",
-                "https://www.aitaotu.com/tag/yunvlang.html",
-                "https://www.aitaotu.com/tag/feituwang.html",
-                "https://www.aitaotu.com/tag/huayan.html",
-                "https://www.aitaotu.com/tag/sishangxiezhen.html",
-                "https://www.aitaotu.com/tag/yingsihui.html",
-                "https://www.aitaotu.com/tag/Tyingart.html",
-                "https://www.aitaotu.com/tag/xiweisha.html",
-                "https://www.aitaotu.com/tag/zhongguotuimo.html",
-                "https://www.aitaotu.com/tag/tangsi.html",
-                "https://www.aitaotu.com/tag/damingmowang.html",
-                "https://www.aitaotu.com/tag/taste.html",
-                "https://www.aitaotu.com/tag/moki.html",
-                "https://www.aitaotu.com/tag/51modozazhi.html",
-                "https://www.aitaotu.com/tag/maomengbang.html",
-                "https://www.aitaotu.com/tag/tianshisheying.html",
-                "https://www.aitaotu.com/tag/tangguohuabao.html",
-                "https://www.aitaotu.com/tag/msjlb.html",
-                "https://www.aitaotu.com/tag/tukmo.html"};
+    private static String fileName;
 
-        // 标签
-        for (int j = 0; j < urlU.length; j++) {
-            String dom = UrlReqUtil.get("https://www.aitaotu.com/tag/tuinvlang.html");
-            String[] split = dom.split("<a class=\"Pli-litpic\"");
+    /**
+     * 获取封面
+     */
+    private static int getCover(String url, boolean isNum) {
+        String mainUrl = "https://www.aitaotu.com";
+        String dom;
+        String[] split = new String[0];
+        try {
+            dom = UrlReqUtil.get(url);
+            split = dom.split("<a class=\"Pli-litpic\"");
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(e);
+            getCover(url, isNum);
+        }
+        int num = 0;
+        for (int j = 1; j < split.length; j++) {
+            String replace = split[j].replace("\r\n", "");
+            String title = replace.substring(replace.indexOf("title=\"") + "title=\"".length(), replace.indexOf("\">"));
+            String urlz = replace.substring(replace.indexOf("href=\"") + "href=\"".length(), replace.indexOf("\" target"));
+            String substring = title + "=" + mainUrl + urlz;
+            if (isNum) {
+                fileName = url.replace(mainUrl + "/tag/", "").replace(".html", "_url.txt");
+            } else {
+//                fileName = url.replace(mainUrl + "/tag/", "").replace("/", "").replace(j+".html", "_url.txt");
+            }
+            String dir = "res/url/";
+            File file = new File(dir);
+            if (!file.exists()) {
+                file.mkdirs();
+            }
 
-            // 封面
-            for (int i = 1; i < split.length; i++) {
-                String title = split[i].substring(split[i].indexOf("title=\"") + "title=\"".length(), split[1].indexOf("\">"));
-                String url = split[i].substring(split[i].indexOf("href=\"") + "href=\"".length(), split[1].indexOf("\" target"));
-                String substring = title + "=https://www.aitaotu.com" + url;
-                // 详情
-                // TODO: 2018/5/12 ----------
-                String dom1 = UrlReqUtil.get("https://www.aitaotu.com" + url);
-                FileUtil.printFile("home2.txt",dom1);
-                return;
+            FileUtil.printFile(dir + "/" + fileName, substring + "\r\n", true);
+            System.out.println("条目完成写入:" + j + "/" + (split.length - 1));
+            if (isNum && j == split.length - 1) {
+                int index = replace.indexOf(".html\">末页</a></span>");
+                if (index == -1) {
+                    return 1;
+                }
+                String substring1 = replace.substring(0, index);
+                int numIndex = substring1.lastIndexOf("/") + 1;
+                num = Integer.parseInt(replace.substring(numIndex, substring1.length()));
+            }
+
+            // -------------------通过封面url获取详情----------------------
+//            int num1 = getDetailed(mainUrl + urlz, dir, true);
+//            System.out.println(mainUrl + urlz + ">>详情第1页完成");
+//            for (int k = 2; k <= num1; k++) {
+//                String url1 = mainUrl + urlz.replace(".html", "_" + k + ".html");
+//                getDetailed(url1, dir, false);
+//                System.out.println(mainUrl + urlz + ">>详情第" + k + "页完成");
+//            }
+        }
+        return num;
+    }
+
+    @Test
+    public void detailed() {
+        List<String> strings = FileUtil.readLineFile("res/url/" + Url.fileF[0]);
+        for (int j = 143; j < strings.size(); j++) {
+            String url = strings.get(j).split("=")[1];
+
+//         -------------------通过封面url获取详情----------------------
+            int num1 = getDetailed(url, "res/img", true);
+            System.out.println(url + "  完成度:1/" + num1);
+            for (int k = 2; k <= num1; k++) {
+                String url1 = url.replace(".html", "_" + k + ".html");
+                getDetailed(url1, "res/img", false);
+                System.out.println(url1 + "  完成度:" + k + "/" + num1);
+            }
+            System.out.println(url + "  总进度:" + (j + 1) + "/" + strings.size());
+        }
+    }
+
+
+    /**
+     * 获取详细数据
+     *
+     * @return
+     */
+    private static int getDetailed(String url, String preDir, boolean isNum) {
+        String dom;
+        String substring;
+        String[] split = new String[0];
+        try {
+            dom = UrlReqUtil.get(url);
+
+            substring = dom.substring(dom.indexOf("<p align=\"center\">"), dom.indexOf("<div class=\"photo-fbl\">"));
+
+            split = substring.split("\" /></a>");
+        } catch (Exception e) {
+            getDetailed(url, preDir, isNum);
+        }
+        int num = 0;
+        for (int j = 0; j < split.length; j++) {
+            if (j != split.length - 1) {
+                String imgUrl = split[j].substring(split[j].indexOf("<img src=\"") + "<img src=\"".length(), split[j].indexOf("\" alt=\""));
+                String imgName = split[j].substring(split[j].indexOf("\" alt=\"") + "\" alt=\"".length(), split[j].length());
+                String substring1 = imgName + "=" + imgUrl;
+                String mainurl = url.substring(0, url.lastIndexOf("/") + 1);
+                if (isNum) {
+                    fileName = url.replace(mainurl, "").replace(".html", ".txt");
+                } else {
+//                    fileName = url.replace(mainurl, "").replace(".html", ".txt");
+                }
+//            String dir = preDir + "/" + fileName.substring(0, fileName.lastIndexOf("_"));
+                String dir = preDir;
+                File file = new File(dir);
+                if (!file.exists()) {
+                    file.mkdirs();
+                }
+                FileUtil.printFile(dir + "/" + fileName, substring1 + "\r\n", true);
+                System.out.println("条目完成写入:" + (j + 1) + "/" + (split.length - 1));
+            } else {
+                int index = split[j].lastIndexOf(".html\">末页</a></li>");
+                if (index == -1) {
+                    return 1;
+                }
+                num = Integer.parseInt(split[j].substring(split[j].lastIndexOf("_") + "_".length(), index));
             }
         }
+        return num;
     }
 }

@@ -84,7 +84,6 @@ public class UrlReqUtil {
             System.out.println(sb.toString());
             return sb.toString();
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             return null;
         } finally {
