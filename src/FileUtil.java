@@ -44,7 +44,7 @@ public class FileUtil {
             int i = 1;
             while ((line = bufReader.readLine()) != null) {
                 data.add(line);
-                System.out.println("第" + i + "行：" + line);
+//                System.out.println("第" + i + "行：" + line);
                 i++;
             }
             bufReader.close();

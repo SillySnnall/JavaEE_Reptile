@@ -80,20 +80,26 @@ public class Main {
 
     @Test
     public void detailed() {
-        List<String> strings = FileUtil.readLineFile("res/url/" + Url.fileF[0]);
-        for (int j = 143; j < strings.size(); j++) {
+        String file = Url.fileF[22];// 63
+        String imgDir = "res/img/" + file.substring(0, file.lastIndexOf("_url.txt"));
+        List<String> strings = FileUtil.readLineFile("res/url/" + file);
+        for (int j = 0; j < strings.size(); j++) {
             String url = strings.get(j).split("=")[1];
 
 //         -------------------通过封面url获取详情----------------------
-            int num1 = getDetailed(url, "res/img", true);
+            int num1 = getDetailed(url, imgDir, true);
             System.out.println(url + "  完成度:1/" + num1);
             for (int k = 2; k <= num1; k++) {
                 String url1 = url.replace(".html", "_" + k + ".html");
-                getDetailed(url1, "res/img", false);
+                getDetailed(url1, imgDir, false);
                 System.out.println(url1 + "  完成度:" + k + "/" + num1);
             }
             System.out.println(url + "  总进度:" + (j + 1) + "/" + strings.size());
         }
+        String name = Url.fileMap.get(file);
+        String print = name + "=" + file;
+        FileUtil.printFile("res/cover_url.txt", print + "\r\n", true);
+        corloimg(file);
     }
 
 
@@ -115,6 +121,10 @@ public class Main {
         } catch (Exception e) {
             getDetailed(url, preDir, isNum);
         }
+        File file = new File(preDir);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
         int num = 0;
         for (int j = 0; j < split.length; j++) {
             if (j != split.length - 1) {
@@ -128,13 +138,8 @@ public class Main {
 //                    fileName = url.replace(mainurl, "").replace(".html", ".txt");
                 }
 //            String dir = preDir + "/" + fileName.substring(0, fileName.lastIndexOf("_"));
-                String dir = preDir;
-                File file = new File(dir);
-                if (!file.exists()) {
-                    file.mkdirs();
-                }
-                FileUtil.printFile(dir + "/" + fileName, substring1 + "\r\n", true);
-                System.out.println("条目完成写入:" + (j + 1) + "/" + (split.length - 1));
+                FileUtil.printFile(preDir + "/" + fileName, substring1 + "\r\n", true);
+                System.out.println("条目完成写入:" + (j + 1) + "/" + (split.length - 1) + " " + imgUrl);
             } else {
                 int index = split[j].lastIndexOf(".html\">末页</a></li>");
                 if (index == -1) {
@@ -144,5 +149,24 @@ public class Main {
             }
         }
         return num;
+    }
+
+    public static void corloimg(String fileName) {
+        List<String> strings = FileUtil.readLineFile("res/url/" + fileName);
+        FileUtil.printFile("res/url/" + fileName, "", false);
+        for (int j = 0; j < strings.size(); j++) {
+            if (strings.get(j).isEmpty()) {
+                continue;
+            }
+            String url = strings.get(j).split("=")[1];
+            url = url.replace("html", "txt");
+            url = url.substring(url.lastIndexOf("/") + 1, url.length());
+            String url1 = fileName.replace("_url.txt", "");
+            String img = FileUtil.readLineFile("res/img/" + url1 + "/" + url).get(0).split("=")[1];
+            img = strings.get(j) + "=" + img;
+            FileUtil.printFile("res/url/" + fileName, img + "\r\n", true);
+            System.out.println("封面图片写入进度:" + (j + 1) + "/" + strings.size());
+        }
+        System.out.println("封面图片写入完成:" + fileName);
     }
 }
