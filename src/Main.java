@@ -80,7 +80,7 @@ public class Main {
 
     @Test
     public void detailed() {
-        String file = Url.fileF[26];// 63
+        String file = Url.fileF[34];// 63
         String imgDir = "res/img/" + file.substring(0, file.lastIndexOf("_url.txt"));
         List<String> strings = FileUtil.readLineFile("res/url/" + file);
         for (int j = 0; j < strings.size(); j++) {
