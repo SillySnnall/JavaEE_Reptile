@@ -80,10 +80,10 @@ public class Main {
 
     @Test
     public void detailed() {
-        String file = Url.fileF[58];// 63
+        String file = Url.fileF[63];// 63
         String imgDir = "res/img/" + file.substring(0, file.lastIndexOf("_url.txt"));
         List<String> strings = FileUtil.readLineFile("res/url/" + file);
-        for (int j = 683; j < strings.size(); j++) {
+        for (int j = 0; j < strings.size(); j++) {
             String url = strings.get(j).split("=")[1];
 
 //         -------------------通过封面url获取详情----------------------
